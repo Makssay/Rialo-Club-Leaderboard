@@ -29,7 +29,7 @@ def save_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def fetch_tweets(cursor=None, limit=100):
+def fetch_tweets(cursor=None, limit=50):
     params = {"type": "Latest", "limit": limit}
     if cursor:
         params["cursor"] = cursor
@@ -65,7 +65,7 @@ def collect_all_tweets():
         if not cursor:
             break
 
-        time.sleep(1.5)  
+        time.sleep(3)
 
     save_json(TWEETS_FILE, all_tweets)
     logging.info(f"\nСбор завершён. Всего твитов: {len(all_tweets)}")
@@ -109,3 +109,4 @@ def build_leaderboard(tweets):
 if __name__ == "__main__":
     tweets = collect_all_tweets()
     build_leaderboard(tweets)
+
