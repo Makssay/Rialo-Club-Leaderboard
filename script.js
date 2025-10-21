@@ -220,3 +220,220 @@ document.getElementById("time-select").addEventListener("change", e => {
   renderTable();
   updateTotals();
 });
+
+// --- Отображение твитов при клике на пользователя ---
+function showTweets(username) {
+    const container = document.getElementById("tweets-list");
+    const title = document.getElementById("tweets-title");
+    container.innerHTML = "";
+
+    const userTweets = allTweets.filter(tweet => {
+        const candidate = (tweet.user && (tweet.user.screen_name || tweet.user.name)) || "";
+        return candidate.toLowerCase().replace(/^@/, "") === username.toLowerCase().replace(/^@/, "");
+    });
+
+    title.textContent = `Посты пользователя: ${username}`;
+
+    if(userTweets.length === 0) {
+        container.innerHTML = "<li>У пользователя нет постов</li>";
+        return;
+    }
+
+    userTweets.forEach(tweet => {
+        const li = document.createElement("li");
+        const content = tweet.text || tweet.content || "(no content)";
+        const url = tweet.url || (tweet.id_str ? `https://twitter.com/${username}/status/${tweet.id_str}` : "#");
+        li.innerHTML = `<a href="${url}" target="_blank">${escapeHtml(content)}</a>`;
+        container.appendChild(li);
+    });
+}
+
+// --- Добавляем обработчики клика на строки таблицы после рендера ---
+function addUserClickHandlers() {
+    const tbody = document.getElementById("leaderboard-body");
+    tbody.querySelectorAll("tr").forEach(tr => {
+        tr.addEventListener("click", () => {
+            const username = tr.children[0].textContent.trim();
+            showTweets(username);
+        });
+    });
+}
+
+// --- Обновляем renderTable, чтобы добавлять клики ---
+function renderTable() {
+    const tbody = document.getElementById("leaderboard-body");
+    tbody.innerHTML = "";
+
+    const filtered = filterData();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * perPage;
+    const pageData = filtered.slice(start, start + perPage);
+
+    pageData.forEach(stats => {
+        const name = stats.username || "";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(name)}</td>
+          <td>${Number(stats.posts || 0)}</td>
+          <td>${Number(stats.likes || 0)}</td>
+          <td>${Number(stats.retweets || 0)}</td>
+          <td>${Number(stats.comments || 0)}</td>
+          <td>${Number(stats.views || 0)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById("page-info").textContent = `Page ${currentPage} / ${totalPages}`;
+
+    // Добавляем обработчики клика
+    addUserClickHandlers();
+}
+
+// --- Создание аккордеона твитов ---
+function toggleTweetsRow(tr, username) {
+    // Если уже есть раскрытая строка под этим пользователем — удаляем её
+    const nextRow = tr.nextElementSibling;
+    if (nextRow && nextRow.classList.contains("tweets-row")) {
+        nextRow.remove();
+        return;
+    }
+
+    // Удаляем все остальные раскрытые строки
+    document.querySelectorAll(".tweets-row").forEach(row => row.remove());
+
+    // Создаем новую строку
+    const tweetsRow = document.createElement("tr");
+    tweetsRow.classList.add("tweets-row");
+    const td = document.createElement("td");
+    td.colSpan = 6; // охватывает все колонки таблицы
+    td.style.background = "#f9f9f9";
+    td.style.padding = "10px";
+
+    const userTweets = allTweets.filter(tweet => {
+        const candidate = (tweet.user && (tweet.user.screen_name || tweet.user.name)) || "";
+        return candidate.toLowerCase().replace(/^@/, "") === username.toLowerCase().replace(/^@/, "");
+    });
+
+    if (userTweets.length === 0) {
+        td.innerHTML = "<i>У пользователя нет постов</i>";
+    } else {
+        const ul = document.createElement("ul");
+        ul.style.margin = "0";
+        ul.style.padding = "0 0 0 20px";
+        userTweets.forEach(tweet => {
+            const li = document.createElement("li");
+            const content = tweet.text || tweet.content || "(no content)";
+            const url = tweet.url || (tweet.id_str ? `https://twitter.com/${username}/status/${tweet.id_str}` : "#");
+            li.innerHTML = `<a href="${url}" target="_blank">${escapeHtml(content)}</a>`;
+            ul.appendChild(li);
+        });
+        td.appendChild(ul);
+    }
+
+    tweetsRow.appendChild(td);
+    tr.parentNode.insertBefore(tweetsRow, tr.nextElementSibling);
+
+
+}
+
+function toggleTweetsRow(tr, username) {
+  const nextRow = tr.nextElementSibling;
+  const isAlreadyOpen = nextRow && nextRow.classList.contains("tweets-row");
+
+  // Убираем все предыдущие аккордеоны и подсветку
+  document.querySelectorAll(".tweets-row").forEach(row => row.remove());
+  document.querySelectorAll("tbody tr").forEach(row => row.classList.remove("active-row"));
+
+  // Если уже был открыт — просто закрываем
+  if (isAlreadyOpen) return;
+
+  // Подсветить текущую строку
+  tr.classList.add("active-row");
+
+  const tweetsRow = document.createElement("tr");
+  tweetsRow.classList.add("tweets-row");
+  const td = document.createElement("td");
+  td.colSpan = 6;
+
+  const userTweets = allTweets.filter(tweet => {
+    const candidate = (tweet.user?.screen_name || tweet.user?.name || "").toLowerCase();
+    return candidate.replace(/^@/, "") === username.toLowerCase().replace(/^@/, "");
+  });
+
+  if (userTweets.length === 0) {
+    td.innerHTML = "<i style='color:#aaa;'>У пользователя нет постов</i>";
+  } else {
+    const container = document.createElement("div");
+    container.classList.add("tweet-container");
+
+    userTweets.forEach(tweet => {
+      const content = tweet.full_text || tweet.text || tweet.content || "";
+      const url = tweet.url || (tweet.id_str ? `https://twitter.com/${username}/status/${tweet.id_str}` : "#");
+      let dateRaw = tweet.created_at || tweet.tweet_created_at || "";
+      let date = "";
+      if (dateRaw) {
+        const parsed = new Date(dateRaw);
+        if (!isNaN(parsed)) {
+          date = parsed.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          });
+        } else {
+          
+          date = dateRaw.split(" ")[0];
+        }
+      }
+
+
+      const mediaList = tweet.extended_entities?.media || tweet.entities?.media || tweet.media || [];
+      let imgTag = "";
+
+      if (Array.isArray(mediaList) && mediaList.length > 0) {
+        imgTag = mediaList
+          .filter(m => m.media_url_https || m.media_url)
+          .map(m => `<img src="${m.media_url_https || m.media_url}">`)
+          .join("");
+      } else {
+        const match = content.match(/https?:\/\/\S+\.(jpg|jpeg|png|gif|webp)/i);
+        if (match) imgTag = `<img src="${match[0]}">`;
+      }
+
+      const card = document.createElement("div");
+      card.classList.add("tweet-card");
+      const wordCount = content.trim().split(/\s+/).length;
+      if (wordCount <= 3 && !imgTag) card.classList.add("short");
+
+      card.innerHTML = `
+        <a href="${url}" target="_blank" style="text-decoration:none; color:inherit;">
+          <p>${escapeHtml(content)}</p>
+          ${imgTag}
+          <div class="tweet-date">${date}</div>
+        </a>
+      `;
+      container.appendChild(card);
+    });
+
+    td.appendChild(container);
+  }
+
+  tweetsRow.appendChild(td);
+  tr.parentNode.insertBefore(tweetsRow, tr.nextElementSibling);
+}
+
+
+
+
+// --- Обновляем обработчики клика ---
+function addUserClickHandlers() {
+    const tbody = document.getElementById("leaderboard-body");
+    tbody.querySelectorAll("tr").forEach(tr => {
+        tr.addEventListener("click", () => {
+            const username = tr.children[0].textContent.trim();
+            toggleTweetsRow(tr, username);
+        });
+    });
+}
+
+// --- renderTable остаётся как раньше, addUserClickHandlers вызывается в конце ---

@@ -262,3 +262,100 @@ tbody tr:hover {
   border-color: #4a90e2;
   box-shadow: 0 0 10px rgba(74, 144, 226, 0.4);
 }
+
+/* === ACCORDION (TWEETS SECTION) === */
+.tweets-row td {
+  background: rgba(13, 17, 23, 0.85);
+  border-top: 2px solid rgba(169, 221, 211, 0.3);
+  padding: 25px;
+  animation: fadeInAccordion 0.4s ease;
+}
+
+@keyframes fadeInAccordion {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Контейнер для карточек твитов */
+.tweet-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Карточка твита */
+.tweet-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(169, 221, 211, 0.3);
+  border-radius: 18px;
+  box-shadow: 0 0 12px rgba(169, 221, 211, 0.15);
+  width: 445px;
+  color: #e7e9ea;
+  padding: 15px 18px;
+  text-align: left;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.tweet-card:hover {
+  transform: translateY(-5px);
+  border-color: #a9ddd3;
+  box-shadow: 0 0 20px rgba(169, 221, 211, 0.4);
+}
+
+/* Текст твита */
+.tweet-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4rem;
+  white-space: pre-line;
+}
+
+/* Изображение внутри твита */
+.tweet-card img {
+  width: 100%;
+  border-radius: 14px;
+  margin-top: 10px;
+  object-fit: cover;
+}
+
+/* Дата */
+.tweet-card .tweet-date {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #a9ddd3;
+  opacity: 0.8;
+  text-align: right;
+  font-style: italic;
+}
+
+
+/* Короткие твиты (автоматическая адаптация) */
+.tweet-card.short {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  text-align: center;
+  justify-content: center;
+}
+
+/* === ACTIVE ROW (User opened) === */
+tr.active-row {
+  background: rgba(169, 221, 211, 0.15) !important;
+  box-shadow: 0 0 20px rgba(169, 221, 211, 0.4);
+  transition: all 0.3s ease;
+}
+
+tr.active-row:hover {
+  background: rgba(169, 221, 211, 0.2) !important;
+}
