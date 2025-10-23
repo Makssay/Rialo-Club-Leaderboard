@@ -339,7 +339,8 @@ function toggleTweetsRow(tr, username) {
 
 function toggleTweetsRow(tr, username) {
   const nextRow = tr.nextElementSibling;
-  const isAlreadyOpen = nextRow && nextRow.classList.contains("tweets-row");
+  const isAlreadyOpen = nextRow && nextRow.classList.contains("tweets-row") &&
+                        nextRow.dataset.username === username;
 
   // Убираем все предыдущие аккордеоны и подсветку
   document.querySelectorAll(".tweets-row").forEach(row => row.remove());
@@ -353,6 +354,7 @@ function toggleTweetsRow(tr, username) {
 
   const tweetsRow = document.createElement("tr");
   tweetsRow.classList.add("tweets-row");
+  tweetsRow.dataset.username = username; // <-- важно для проверки дубликатов
   const td = document.createElement("td");
   td.colSpan = 6;
 
@@ -370,36 +372,29 @@ function toggleTweetsRow(tr, username) {
     userTweets.forEach(tweet => {
       const content = tweet.full_text || tweet.text || tweet.content || "";
       const url = tweet.url || (tweet.id_str ? `https://twitter.com/${username}/status/${tweet.id_str}` : "#");
+
+      // формат даты
       let dateRaw = tweet.created_at || tweet.tweet_created_at || "";
       let date = "";
       if (dateRaw) {
         const parsed = new Date(dateRaw);
-        if (!isNaN(parsed)) {
-          date = parsed.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          });
-        } else {
-          
-          date = dateRaw.split(" ")[0];
-        }
+        date = !isNaN(parsed)
+          ? parsed.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+          : dateRaw.split(" ")[0];
       }
 
-
+      // media без дубликатов
       const mediaList = tweet.extended_entities?.media || tweet.entities?.media || tweet.media || [];
-      let imgTag = "";
+      const uniqueMediaUrls = [...new Set(mediaList.map(m => m.media_url_https || m.media_url).filter(Boolean))];
+      let imgTag = uniqueMediaUrls.map(url => `<img src="${url}">`).join("");
 
-      if (Array.isArray(mediaList) && mediaList.length > 0) {
-        imgTag = mediaList
-          .filter(m => m.media_url_https || m.media_url)
-          .map(m => `<img src="${m.media_url_https || m.media_url}">`)
-          .join("");
-      } else {
+      // fallback на ссылки в тексте
+      if (!imgTag) {
         const match = content.match(/https?:\/\/\S+\.(jpg|jpeg|png|gif|webp)/i);
         if (match) imgTag = `<img src="${match[0]}">`;
       }
 
+      // создаём карточку
       const card = document.createElement("div");
       card.classList.add("tweet-card");
       const wordCount = content.trim().split(/\s+/).length;
@@ -421,6 +416,7 @@ function toggleTweetsRow(tr, username) {
   tweetsRow.appendChild(td);
   tr.parentNode.insertBefore(tweetsRow, tr.nextElementSibling);
 }
+
 
 
 
