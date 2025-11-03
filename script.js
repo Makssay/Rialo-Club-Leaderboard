@@ -433,3 +433,32 @@ function addUserClickHandlers() {
 }
 
 // --- renderTable остаётся как раньше, addUserClickHandlers вызывается в конце ---
+
+const player = document.getElementById('player');
+const playBtn = document.getElementById('play-btn');
+const nextBtn = document.getElementById('next-btn');
+
+
+let isPlaying = false;
+
+player.volume = 0.5; // стартовая громкость
+
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    player.pause();
+    playBtn.textContent = '▶️';
+  } else {
+    player.play().then(() => {
+      playBtn.textContent = '⏸️';
+    }).catch(err => console.log('Autoplay blocked:', err));
+  }
+  isPlaying = !isPlaying;
+});
+
+nextBtn.addEventListener('click', () => {
+  player.currentTime = 0;
+  player.play();
+  playBtn.textContent = '⏸️';
+  isPlaying = true;
+});
+
