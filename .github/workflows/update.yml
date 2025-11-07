@@ -2,8 +2,7 @@ name: Update Leaderboard
 
 on:
   schedule:
-    # 10:30 по UTC+3 → 07:30 UTC
-    - cron: "30 7 * * *"
+    - cron: "30 7 */2 * *"
   workflow_dispatch:
 
 jobs:
