@@ -360,60 +360,19 @@ tr.active-row:hover {
   background: rgba(169, 221, 211, 0.2) !important;
 }
 
-.music-player {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 20px;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-  backdrop-filter: blur(6px);
-}
-
-.track-cover {
-  width: 150px;
-  height: 150px;
-  border-radius: 5px;
-  object-fit: cover;
-}
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-}
-
-.track-title {
-  font-size: 1rem;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#play-btn, #next-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-#play-btn:hover, #next-btn:hover {
-  transform: scale(1.2);
-}
-
-#volume-slider {
-  width: 80px;
-  accent-color: #ff4081;
-  cursor: pointer;
+.top-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto; /* вместо фиксированных 200px */
+    min-height: 200px; /* минимальная высота */
+    background: url('banner-image.png') no-repeat center top;
+    background-size: contain; /* помещаем всю картинку без обрезки */
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 9999;
 }

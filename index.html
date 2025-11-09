@@ -5,8 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rialo Club Leaderboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Баннер сверху */
+        .top-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; /* высота баннера, можно под картинку */
+            background: url('banner-image.png') no-repeat center/cover;
+            opacity: 0.8; /* прозрачность, чтобы видеть сайт под картинкой */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* чтобы не мешал кликам по сайту */
+            z-index: 9999;
+        }
+
+        .top-overlay-text {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        }
+
+        /* Чтобы контент сайта не перекрывался баннером */
+        body {
+            padding-top: 200px; /* совпадает с высотой баннера */
+        }
+    </style>
 </head>
 <body>
+    <!-- Баннер поверх сайта -->
+    <div class="top-overlay">
+        <div class="top-overlay-text">Under technical review</div>
+    </div>
+
     <div class="background"></div>
 
     <div class="header-fixed">
@@ -14,21 +48,6 @@
     </div>
 
     <div class="container">
-
-        <div class="music-player">
-        <img src="orca.jpg" alt="Track cover" class="track-cover">
-        <div class="controls">
-            <h3 class="track-title">Anthem of Orca</h3>
-            <div class="buttons">
-            <button id="play-btn">▶️</button>
-            </div>
-        </div>
-        <audio id="player" src="hardbass.mp3"></audio>
-        </div>
-
-
-
-
         <!-- === WELCOME SECTION === -->
         <div class="welcome-section">
             <h1>WELCOME!</h1>
@@ -36,7 +55,7 @@
             <p>If your posts are not published through <a href="https://x.com/i/communities/1951903018464772103" target="_blank">Rialo Club</a>, they will not be visible on the leaderboard.</p>
             <p>By clicking on any participant, you can view their works directly on the website.</p>
             <p>By clicking on any metric (for example, Views), you can filter by it.</p>
-            <p>update every 48 hours at 8am</p>
+            <p>Updated every day.</p>
             <p>Support us on Twitter!</p>
 
             <div class="team-box">
@@ -92,16 +111,11 @@
         </div>
     </div>
 
+    <!-- Твиты выбранного пользователя -->
+    <div id="tweets-container" style="margin-top: 20px;">
+        <ul id="tweets-list"></ul>
+    </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-        <!-- Твиты выбранного пользователя -->
-    <div id="tweets-container" style="margin-top: 20px;">
-        
-        <ul id="tweets-list"></ul>
-    </div>
-
-
-    
-
