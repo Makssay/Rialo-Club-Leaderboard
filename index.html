@@ -14,6 +14,13 @@
     </div>
 
     <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="leaderboard">Leaderboard</button>
+            <button class="tab-btn" data-tab="analytics">Analytics</button>
+        </div>
+        <!-- wrapper for leaderboard content so we can toggle visibility -->
+        <div id="leaderboard-wrapper">
 
         <div class="music-player">
         <img src="orca.jpg" alt="Track cover" class="track-cover">
@@ -90,9 +97,86 @@
             <span id="page-info"></span>
             <button id="next-page">Next</button>
         </div>
+        </div> <!-- /#leaderboard-wrapper -->
+
+        <!-- Analytics tab content (hidden by default) -->
+        <div id="tab-analytics" class="tab-content" style="display:none; text-align:left;">
+            <h2>Analytics</h2>
+
+            <!-- Time filter for analytics -->
+            <div class="analytics-time-filter" style="display:flex; gap:10px; align-items:center; margin-bottom:18px; background: rgba(255,255,255,0.02); padding:12px; border-radius:12px;">
+                <label for="analytics-time-select" style="font-weight:600; color:#a9ddd3; white-space:nowrap;">Filter by time:</label>
+                <select id="analytics-time-select" style="flex:1; max-width:180px;">
+                    <option value="all">All time</option>
+                    <option value="30">Last 30 days</option>
+                    <option value="14">Last 14 days</option>
+                    <option value="7">Last 7 days</option>
+                </select>
+            </div>
+
+            <!-- Nested tabs for analytics sections -->
+            <div class="analytics-nested-tabs">
+                <button class="analytics-tab-btn active" data-analytics-tab="averages">Avg metrics</button>
+                <button class="analytics-tab-btn" data-analytics-tab="authors">Top 10 authors</button>
+                <button class="analytics-tab-btn" data-analytics-tab="posts">Top 10 posts</button>
+            </div>
+
+            <!-- 1) Average metrics per user -->
+            <section class="analytics-nested-content active" id="analytics-averages-section" data-analytics-section="averages">
+                <div class="analytics-block" id="analytics-averages">
+                    <h3>Average metrics per user</h3>
+                    <div class="analytics-row" style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div class="stat-box" id="avg-posts">Avg Posts: -</div>
+                        <div class="stat-box" id="avg-likes">Avg Likes: -</div>
+                        <div class="stat-box" id="avg-views">Avg Views: -</div>
+                    </div>
+                    <!-- Chart: tweets per day -->
+                    <div style="margin-top:16px;">
+                        <canvas id="analytics-chart" height="120"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2) Top 10 authors with filter -->
+            <section class="analytics-nested-content" id="analytics-authors-section" data-analytics-section="authors">
+                <div class="analytics-block" id="analytics-top-authors-block">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <h3 style="margin:0;">Top 10 authors</h3>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <label for="author-metric-select" style="font-weight:600; color:#a9ddd3;">Sort by:</label>
+                            <select id="author-metric-select">
+                                <option value="posts">Posts</option>
+                                <option value="likes">Likes</option>
+                                <option value="views">Views</option>
+                            </select>
+                        </div>
+                    </div>
+                    <ol id="top-authors-list" style="margin-top:12px;"></ol>
+                </div>
+            </section>
+
+            <!-- 3) Top 10 posts with filter -->
+            <section class="analytics-nested-content" id="analytics-posts-section" data-analytics-section="posts">
+                <div class="analytics-block" id="analytics-top-posts-block">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <h3 style="margin:0;">Top 10 posts</h3>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <label for="post-metric-select" style="font-weight:600; color:#a9ddd3;">Sort by:</label>
+                            <select id="post-metric-select">
+                                <option value="likes">Likes</option>
+                                <option value="views">Views</option>
+                            </select>
+                        </div>
+                    </div>
+                    <ol id="top-posts-list" style="margin-top:12px;"></ol>
+                </div>
+            </section>
+        </div>
     </div>
 
 
+    <!-- Chart.js CDN for analytics charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
