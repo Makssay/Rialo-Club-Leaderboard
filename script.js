@@ -346,10 +346,15 @@ function toggleTweetsRow(tr, username) {
             });
         }
 
-        // media_urls (optional)
-        if (Array.isArray(t.media_urls)) {
-            t.media_urls.forEach((u) => mediaUrls.push(u));
+        // YOUR REAL FORMAT: t.media[]
+        if (Array.isArray(t.media)) {
+            t.media.forEach((m) => {
+                if (m.url) {
+                    mediaUrls.push(m.url);
+                }
+            });
         }
+
 
         // YOUR REAL FORMAT: t.media[]
         if (Array.isArray(t.media)) {
